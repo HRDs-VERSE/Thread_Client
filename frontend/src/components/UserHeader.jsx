@@ -42,7 +42,7 @@ function UserHeader({ user }) {
         setUpdating(true);
 
         try {
-            const res = await fetch(`api/v1/users/follow-un-follow/${user?._id}`, {
+            const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/users/follow-un-follow/${user?._id}`, {
                 method: "POST",
                 "Content-Type": "application/json",
             });
@@ -54,7 +54,7 @@ function UserHeader({ user }) {
                 return;
             }
 
-            const updatedUserResponse = await fetch("api/v1/users/current-user");
+            const updatedUserResponse = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/current-user");
             const updatedUserData = await updatedUserResponse.json();
 
             // Update the local storage or state with the updated user data

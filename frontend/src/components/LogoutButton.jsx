@@ -11,7 +11,7 @@ const LogoutButton = () => {
 
 	const handleLogout = async () => {
 		try {
-			const res = await fetch("/api/v1/users/logout", {
+			const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/logout", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

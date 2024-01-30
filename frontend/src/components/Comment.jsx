@@ -21,7 +21,7 @@ function Comment({
     const deleteComment = async () => {
         try {
             console.log('Deleting comment:', postId, commentId);
-            const res = await fetch(`/api/v1/post/comment/${postId}/${commentId}`, {
+            const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/post/comment/${postId}/${commentId}`, {
                 method: "PATCH",
                 headers: {
 					"Content-Type": "application/json"

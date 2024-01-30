@@ -19,7 +19,7 @@ function Actions({post:post_}) {
 		if(isLiking) return
 		setLiking(true)
 		try {
-			const res = await fetch(`/api/v1/post/like/${post?._id}`, {
+			const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/post/like/${post?._id}`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json"
@@ -48,7 +48,7 @@ function Actions({post:post_}) {
 		if (isReplying) return;
 		setIsReplying(true);
 		try {
-			const res = await fetch(`/api/v1/post/comment/${post?._id}`, {
+			const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/post/comment/${post?._id}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

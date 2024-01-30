@@ -35,7 +35,7 @@ export default function UserProfileEdit() {
     e.preventDefault()
 
     try {
-       const res = await fetch("api/v1/users/update-account-details", {
+       const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/update-account-details", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"

@@ -41,7 +41,7 @@ function Header() {
     const fetchUserSearchResults = async () => {
       console.log(userValue)
       try {
-        const res = await fetch("api/v1/users/search-user", {
+        const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/search-user", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

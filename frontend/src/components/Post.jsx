@@ -16,7 +16,7 @@ const Post = ({ post, postedBy }) => {
     useEffect(() => {
         const userData = async () => {
             try {
-                const res = await fetch(`api/v1/users/${postedBy}`)
+                const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/users/${postedBy}`)
                 const data = await res.json()
                 if (data.error) {
                     showToast("Error", data.error, "error")

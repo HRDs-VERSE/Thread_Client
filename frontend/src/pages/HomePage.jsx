@@ -11,7 +11,7 @@ function HomePage() {
     const getFeedPost = async () => {
       setLoading(true)
       try {
-        const res = await fetch("api/v1/post/feeds")
+        const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/post/feeds")
         const data = await res.json()
         if (data.error) {
           showToast("Error", data.error, "error")

@@ -18,7 +18,7 @@ function UserPage() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const res = await fetch(`/api/v1/users/${username}`);
+        const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/users/${username}`);
         const data = await res.json();
         if (data.error) {
           showToast("Error", data.error, "error");
@@ -34,7 +34,7 @@ function UserPage() {
     const getPost = async () => {
       setFetchingPost(true)
       try {
-        const res = await fetch(`/api/v1/post/feeds/${param.username}`);
+        const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/post/feeds/${param.username}`);
         const data = await res.json();
         if (data.error) {
           showToast("Error", data.error, "error");
