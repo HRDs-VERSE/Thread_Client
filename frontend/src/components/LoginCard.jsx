@@ -38,7 +38,7 @@ export default function SignupCard() {
 		console.log(input.credential, input.password)
 		try {
 
-			const res = await fetch("api/v1/users/login", {
+			const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/login", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"

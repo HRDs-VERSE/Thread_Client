@@ -1,11 +1,4 @@
-[context.production.environment]
-  REACT_APP_API_URL = "https://mern-thread-hrd.vercel.app/"
-
-[context.development.environment]
-  REACT_APP_API_URL = "http://localhost:8000"
-
 [[redirects]]
-  from = "/api/*"
-  to = "http://localhost:8000/:splat"
-  status = 200
-  force = true
+from = "/*"
+to = "index.html"
+status = 200
