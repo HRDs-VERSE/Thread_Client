@@ -139,8 +139,7 @@ export default function SignupCard() {
             </FormControl>
             <Stack spacing={10} pt={2}>
               <Button
-                position={"relative"}
-                left={"11rem"}
+                ml={"11rem"}
                 w={"14rem"}
                 loadingText="Submitting"
                 size="lg"
