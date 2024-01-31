@@ -41,10 +41,14 @@ export default function SignupCard() {
 			const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/login", {
 				method: "POST",
 				headers: {
-					"Content-Type": "application/json"
+					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(input)
-			})
+				body: JSON.stringify(input),
+				credentials: 'include', // Include credentials (cookies, authorization headers, etc.)
+			});
+
+			// Continue handling the response as needed
+
 			const data = await res.json()
 			if (data.error) {
 				showToast("error", data.error, "error")
@@ -62,7 +66,7 @@ export default function SignupCard() {
 
 		} catch (error) {
 			console.log(error.message || "Something went wrong while submitting")
-		}finally{
+		} finally {
 			setLoading(false)
 		}
 	}
@@ -95,14 +99,14 @@ export default function SignupCard() {
 								rounded={".7rem"}
 								placeholder='email or username'
 								onChange={(e) => setInput({ ...input, credential: e.target.value })}
-								value={input.credential}  />
+								value={input.credential} />
 						</FormControl>
 						<FormControl isRequired>
 							<InputGroup>
 								<Input type={showPassword ? 'text' : 'password'}
 									w={"18rem"}
 									h={"3rem"}
-                  					rounded={".7rem"}
+									rounded={".7rem"}
 									placeholder='password'
 									onChange={(e) => setInput({ ...input, password: e.target.value })}
 									value={input.password}
@@ -141,6 +145,6 @@ export default function SignupCard() {
 				</Box>
 			</Stack>
 		</Flex>
-		
+
 	)
 }

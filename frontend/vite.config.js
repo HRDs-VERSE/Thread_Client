@@ -5,12 +5,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,
+    port: 4000,
     proxy: {
       "/api": {
         target: "https://mern-thread-hrd.vercel.app/",
         changeOrigin: true,
-        secure: false
+        secure: true
       }
     }
   }
