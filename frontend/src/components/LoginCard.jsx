@@ -40,11 +40,11 @@ export default function SignupCard() {
 
 			const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/login", {
 				method: "POST",
+				credentials: 'include', // Include credentials (cookies, authorization headers, etc.)
 				headers: {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify(input),
-				credentials: 'include', // Include credentials (cookies, authorization headers, etc.)
 			});
 
 			// Continue handling the response as needed

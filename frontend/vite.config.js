@@ -10,7 +10,7 @@ export default defineConfig({
       "/api": {
         target: "https://mern-thread-hrd.vercel.app/",
         changeOrigin: true,
-        secure: true
+        // secure: true
       }
     }
   }
