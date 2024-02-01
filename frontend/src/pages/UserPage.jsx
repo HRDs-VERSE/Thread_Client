@@ -25,6 +25,7 @@ function UserPage() {
           showToast("Error", data.error, "error");
           return;
         }
+        console.log(data)
         setUser(data);
       } catch (error) {
         showToast("Error", error.message, "error");
