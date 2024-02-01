@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom"
 function PostPage() {
   const navigate = useNavigate()
   const params = useParams()
-  
   const showToast = useShowToast()
   const [user, setUser] = useState()
   const [post, setPost] = useState()
