@@ -22,7 +22,7 @@ function PostPage() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const res = await fetch(`/api/v1/users/${params?.username}`);
+        const res = await fetch(`${apiURL}/api/v1/users/${params?.username}`);
         const data = await res.json();
         if (data.error) {
           showToast("Error", data.error, "error");
