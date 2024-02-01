@@ -30,6 +30,7 @@ function UserPage() {
     };
     const getPost = async () => {
       setFetchingPost(true)
+      console.log("error")
       try {
         const res = await fetch(`${apiURL}/api/v1/post/feeds/${param.username}`);
         const data = await res.json();
