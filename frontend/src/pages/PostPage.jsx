@@ -1,6 +1,6 @@
 import { Avatar, Flex, Image, Text, Box, Divider, Button } from "@chakra-ui/react"
 import Actions from "../components/Actions"
-import { BsThreeDots } from "react-icons/bs"
+// import { BsThreeDots } from "react-icons/bs"
 import { useEffect, useState } from "react"
 import Comment from "../components/Comment"
 import { useParams } from "react-router-dom"
@@ -12,7 +12,6 @@ function PostPage() {
   const navigate = useNavigate()
   const params = useParams()
   const showToast = useShowToast()
-  // const [liked, setLiked] = useState(true)
   const [user, setUser] = useState()
   const [post, setPost] = useState()
   const [fetchingPost, setFetchingPost] = useState(true)
@@ -29,6 +28,7 @@ function PostPage() {
           showToast("Error", data.error, "error");
           return;
         }
+        console.log(data)
         setUser(data);
       } catch (error) {
         showToast("Error", error.message, "error");
@@ -60,6 +60,8 @@ function PostPage() {
     getUser();
   }, []);
 
+
+
   if (!user && loading && fetchingPost) {
     return (
       <Flex justifyContent={"center"}>
@@ -70,18 +72,14 @@ function PostPage() {
 
 
 
-  if (!user && !loading) {
+  if (!user) {
     return (
       <Flex justifyContent={"center"}>
         <h1 style={{ fontSize: "5rem" }}>🫤 is there a user</h1>
       </Flex>
-    )
+    );
   }
 
-
-  if (!user && !user) {
-    return null
-  }
 
   return (
     <>
