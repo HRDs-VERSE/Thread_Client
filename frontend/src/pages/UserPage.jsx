@@ -49,7 +49,7 @@ function UserPage() {
     getUser();
   }, [username, showToast]);
 
-  if (!user && !fetchingPost) {
+  if (!user && fetchingPost) {
     return (
       <Flex justifyContent={"center"}>
         <Spinner size="xl" />
@@ -71,7 +71,7 @@ function UserPage() {
     <div>
       <UserHeader user={user} />
       {!fetchingPost && post.length === 0 && <h1>No! posts</h1>}
-      {fetchingPost && (
+      {!fetchingPost && (
         <Flex justifyContent={"center"} position={"relative"} top={"4rem"}>
           <Spinner size="xl" />
         </Flex>
