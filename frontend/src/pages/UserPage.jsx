@@ -49,7 +49,7 @@ function UserPage() {
     getUser();
   }, [username, showToast]);
 
-  if (!user && fetchingPost) {
+  if (!user && !fetchingPost) {
     return (
       <Flex justifyContent={"center"}>
         <Spinner size="xl" />
