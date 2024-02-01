@@ -3,11 +3,14 @@ import { AddIcon } from "@chakra-ui/icons"
 import { useRef, useState } from "react"
 import usePreviewImg from "../hooks/usePreviewImg"
 import useShowToast from "../hooks/useShowToast"
-// import { BsFillImageFill } from "react-icons/bs"
+import { useRecoilValue } from "recoil"
+import userAtom from "../atoms/userAtom"
+
 const maxtChar = 500
 
 function CreatePost() {
     const showToast = useShowToast()
+    const user = useRecoilValue(userAtom)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [postText, setPostText] = useState()
     const [remainingCharater, setReamaningCharacter] = useState(maxtChar)
@@ -31,13 +34,13 @@ function CreatePost() {
     const handleCreatePost = async () => {
         setLoading(true)
         try {
-            const res = await fetch(`${apiURL}/api/v1/post/`, {
+            const res = await fetch(`${apiURL}/api/v1/post`, {
                 method: "POST", 
                 headers:{
         
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({postFileLocalPath: imgUrl ? imgUrl : null, content: postText})
+                body: JSON.stringify({postFileLocalPath: imgUrl ? imgUrl : null, content: postText, userId: user?._id})
             })
             const data = res.json()
             if (data.error) {

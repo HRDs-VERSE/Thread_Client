@@ -13,7 +13,7 @@ function UserPage() {
   const [post, setPost] = useState([])
   const [fetchingPost, setFetchingPost] = useState(true)
   const apiURL = import.meta.env.VITE_API_URL;
-
+  
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -30,7 +30,6 @@ function UserPage() {
     };
     const getPost = async () => {
       setFetchingPost(true)
-      console.log("error")
       try {
         const res = await fetch(`${apiURL}/api/v1/post/feeds/${param.username}`);
         const data = await res.json();
