@@ -48,7 +48,7 @@ function UserPage() {
     }
     getPost()
     getUser();
-  }, [showToast]);
+  }, []);
 
   if (!user && fetchingPost) {
     return (
