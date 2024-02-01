@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import UserHeader from "../components/UserHeader"
-// import UserPost from "../components/UserPost"
 import { useParams } from "react-router-dom"
 import useShowToast from "../hooks/useShowToast"
 import { Flex, Spinner } from "@chakra-ui/react"
@@ -8,10 +7,9 @@ import Post from "../components/Post"
 
 function UserPage() {
   const param = useParams()
-  const showToast = useShowToast
+  const showToast = useShowToast()
   const [user, setUser] = useState(null)
   const { username } = useParams()
-  const [loading, setLoading] = useState(true)
   const [post, setPost] = useState([])
   const [fetchingPost, setFetchingPost] = useState(true)
   const apiURL = import.meta.env.VITE_API_URL;
@@ -19,7 +17,7 @@ function UserPage() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const res = await fetch(`/api/v1/users/${username}`);
+        const res = await fetch(`${apiURL}/api/v1/users/${username}`);
         const data = await res.json();
         if (data.error) {
           showToast("Error", data.error, "error");
@@ -29,9 +27,7 @@ function UserPage() {
         setUser(data);
       } catch (error) {
         showToast("Error", error.message, "error");
-      } finally {
-        setLoading(false)
-      }
+      } 
     };
     const getPost = async () => {
       setFetchingPost(true)
@@ -54,7 +50,7 @@ function UserPage() {
     getUser();
   }, [username, showToast]);
 
-  if (!user && loading && fetchingPost) {
+  if (!user && fetchingPost) {
     return (
       <Flex justifyContent={"center"}>
         <Spinner size="xl" />
@@ -64,7 +60,7 @@ function UserPage() {
 
 
 
-  if (!user && !loading) {
+  if (!user) {
     return (
       <Flex justifyContent={"center"}>
         <h1 style={{ fontSize: "5rem" }}>🫤 is there a user</h1>
