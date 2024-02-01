@@ -14,6 +14,7 @@ function CreatePost() {
 
     const {handleImageChange, imgUrl, setImgUrl} = usePreviewImg()
     const [loading, setLoading] = useState(false)
+    const apiURL = import.meta.env.VITE_API_URL;
 
     const handleTextChange = (e) => {
         const inputText = e.target.value
@@ -30,7 +31,7 @@ function CreatePost() {
     const handleCreatePost = async () => {
         setLoading(true)
         try {
-            const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/post/", {
+            const res = await fetch(`${apiURL}/api/v1/post/`, {
                 method: "POST", 
                 headers:{
         

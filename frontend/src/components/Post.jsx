@@ -12,11 +12,12 @@ const Post = ({ post, postedBy }) => {
     const [user, setUser] = useState()
     const [liked, setLiked] = useState(false);
     const navigate = useNavigate()
-    // console.log(postedBy)
+    const apiURL = import.meta.env.VITE_API_URL;
+    
     useEffect(() => {
         const userData = async () => {
             try {
-                const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/users/${postedBy}`)
+                const res = await fetch(`${apiURL}/api/v1/users/${postedBy}`)
                 const data = await res.json()
                 if (data.error) {
                     showToast("Error", data.error, "error")

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import UserHeader from "../components/UserHeader"
-import UserPost from "../components/UserPost"
+// import UserPost from "../components/UserPost"
 import { useParams } from "react-router-dom"
 import useShowToast from "../hooks/useShowToast"
 import { Flex, Spinner } from "@chakra-ui/react"
@@ -14,11 +14,12 @@ function UserPage() {
   const [loading, setLoading] = useState(true)
   const [post, setPost] = useState([])
   const [fetchingPost, setFetchingPost] = useState(true)
+  const apiURL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const getUser = async () => {
       try {
-        const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/users/${username}`);
+        const res = await fetch(`/api/v1/users/${username}`);
         const data = await res.json();
         if (data.error) {
           showToast("Error", data.error, "error");
@@ -34,7 +35,7 @@ function UserPage() {
     const getPost = async () => {
       setFetchingPost(true)
       try {
-        const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/post/feeds/${param.username}`);
+        const res = await fetch(`${apiURL}/api/v1/post/feeds/${param.username}`);
         const data = await res.json();
         if (data.error) {
           showToast("Error", data.error, "error");

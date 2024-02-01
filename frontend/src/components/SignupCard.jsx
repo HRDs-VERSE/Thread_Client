@@ -26,6 +26,7 @@ export default function SignupCard() {
   const setUser = useSetRecoilState(userAtom)
   const [showPassword, setShowPassword] = useState(false)
   const setAuthScreen = useSetRecoilState(authScreenAtom);
+  const apiURL = import.meta.env.VITE_API_URL;
   const [input, setInput] = useState({
     fullName: "",
     username: "",
@@ -38,7 +39,7 @@ export default function SignupCard() {
     setLoading(true)
     try {
       
-      const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/register", {
+      const res = await fetch(`${apiURL}/api/v1/users/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -63,7 +64,9 @@ export default function SignupCard() {
 
 
     } catch (error) {
-      console.log(error.message || "Something went wrong while submitting")
+      showToast("error", error.message || "Something went wrong while sign up", "error")
+    } finally{
+      setLoading(false)
     }
   }
 
@@ -71,7 +74,7 @@ export default function SignupCard() {
     <Flex
       align={'center'}
       justify={'center'}>
-      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+      <Stack spacing={8}  maxW={'lg'} >
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
             Sign up
@@ -82,7 +85,7 @@ export default function SignupCard() {
           bg={useColorModeValue('white', '#0f0f0f')}
           boxShadow={'lg'}
           p={8}
-          className='rounded-[1rem]'
+          className='rounded-[1rem] w-auto'
           >
           
           <Stack spacing={4}>

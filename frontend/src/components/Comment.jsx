@@ -15,13 +15,13 @@ function Comment({
     createdAt,
     setComments
 }) {
-
+    
+    const apiURL = import.meta.env.VITE_API_URL;
     const showToast = useShowToast()
 
     const deleteComment = async () => {
         try {
-            console.log('Deleting comment:', postId, commentId);
-            const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/post/comment/${postId}/${commentId}`, {
+            const res = await fetch(`${apiURL}/api/v1/post/comment/${postId}/${commentId}`, {
                 method: "PATCH",
                 headers: {
 					"Content-Type": "application/json"
@@ -29,7 +29,6 @@ function Comment({
             })
 
             const data = await res.json()
-            console.log(data)
             showToast("Success", "Comment deleted successfully", "success")
             setComments(data)
             

@@ -13,17 +13,20 @@ function Actions({post:post_}) {
 	const {isOpen, onOpen, onClose} = useDisclosure()
 	const [reply, setReply] = useState("")
 	const [isReplying, setIsReplying] = useState(false);
+	const apiURL = import.meta.env.VITE_API_URL;
 
 	const handleLikeAndUnlike = async () => {
 		if (!user) return showToast("Error", "Plase Login First", "error")
 		if(isLiking) return
 		setLiking(true)
 		try {
-			const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/post/like/${post?._id}`, {
+			const res = await fetch(`${apiURL}/api/v1/post/like/${post?._id}`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json"
 				},
+				body: JSON.stringify({userId : user?._id})
+				
 			})
 			const data = await res.json()
 			if (data.error) {
@@ -48,12 +51,12 @@ function Actions({post:post_}) {
 		if (isReplying) return;
 		setIsReplying(true);
 		try {
-			const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/post/comment/${post?._id}`, {
+			const res = await fetch(`${apiURL}/api/v1/post/comment/${post?._id}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ content: reply }),
+				body: JSON.stringify({ content: reply, userId: user?._id }),
 			});
 			const data = await res.json();
 			if (data.error) return showToast("Error", data.error, "error");

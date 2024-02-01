@@ -14,6 +14,7 @@ function UserHeader({ user }) {
     const toast = useToast();
     const [updating, setUpdating] = useState(false)
     const [following, setFollowing] = useState(user?.followers.includes(currentUser?.username))
+    const apiURL = import.meta.env.VITE_API_URL;
 
 
     useEffect(() => {
@@ -42,9 +43,12 @@ function UserHeader({ user }) {
         setUpdating(true);
 
         try {
-            const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/users/follow-un-follow/${user?._id}`, {
+            const res = await fetch(`${apiURL}/api/v1/users/follow-un-follow/${user?._id}`, {
                 method: "POST",
-                "Content-Type": "application/json",
+                headers: {
+					"Content-Type": "application/json"
+				},
+                body: JSON.stringify({currentUserId: currentUser?._id})
             });
 
             const data = await res.json();
@@ -54,7 +58,7 @@ function UserHeader({ user }) {
                 return;
             }
 
-            const updatedUserResponse = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/current-user");
+            const updatedUserResponse = await fetch(`${apiURL}/api/v1/users/${currentUser?.username}`);
             const updatedUserData = await updatedUserResponse.json();
 
             // Update the local storage or state with the updated user data

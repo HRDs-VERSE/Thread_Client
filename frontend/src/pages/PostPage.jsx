@@ -18,11 +18,12 @@ function PostPage() {
   const [fetchingPost, setFetchingPost] = useState(true)
   const [loading, setLoading] = useState(true)
   const [postComments, setPostComments] = useState([])
+  const apiURL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const getUser = async () => {
       try {
-        const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/users/${params?.username}`);
+        const res = await fetch(`/api/v1/users/${params?.username}`);
         const data = await res.json();
         if (data.error) {
           showToast("Error", data.error, "error");
@@ -39,7 +40,7 @@ function PostPage() {
     const getPost = async () => {
       setFetchingPost(true);
       try {
-        const res = await fetch(`https://mern-thread-hrd.vercel.app/api/v1/post/${params?.postId}`);
+        const res = await fetch(`${apiURL}/api/v1/post/${params?.postId}`);
         const data = await res.json();
         if (data.error) {
           showToast("Error", data.error, "error");

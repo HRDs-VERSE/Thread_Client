@@ -5,27 +5,28 @@ import Post from "../components/Post"
 import { useRecoilValue } from "recoil"
 import userAtom from "../atoms/userAtom"
 
+
 function HomePage() {
   const user = useRecoilValue(userAtom)
   const showToast = useShowToast()
   const [post, setPost] = useState()
   const [loading, setLoading] = useState(false)
-  console.log(user?.username)
+  const apiURL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const getFeedPost = async () => {
       setLoading(true)
       try {
-        const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/post/feeds")
-      //   const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/post/feeds", {
-      //   method: "POST", // or any other method as needed
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     userId: user?.username, // Assuming user._id is the property containing the user's ID
-      //   }),
-      //   credentials: 'include', // Include credentials (cookies, authorization headers, etc.)
-      // });
+        
+        const res = await fetch(`${apiURL}/api/v1/post/feeds`, {
+        method: "POST", // or any other method as needed
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user?._id, // Assuming user._id is the property containing the user's ID
+        }),
+      });
         const data = await res.json()
         if (data.error) {
           showToast("Error", data.error, "error")

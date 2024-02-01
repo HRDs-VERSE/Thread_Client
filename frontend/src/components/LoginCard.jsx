@@ -26,8 +26,9 @@ export default function SignupCard() {
 	const setUser = useSetRecoilState(userAtom)
 	const [showPassword, setShowPassword] = useState(false)
 	const setAuthScreen = useSetRecoilState(authScreenAtom);
+	const apiURL = import.meta.env.VITE_API_URL;
 	const [input, setInput] = useState({
-		credential: "hrd",
+		credential: "",
 		password: ""
 
 	})
@@ -35,20 +36,20 @@ export default function SignupCard() {
 
 	const handleSubmit = async () => {
 		setLoading(true)
-		console.log(input.credential, input.password)
+
 		try {
 
-			const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/login", {
+			const res = await fetch(`${apiURL}/api/v1/users/login`, {
 				method: "POST",
-				credentials: 'include',
+				// credentials: 'include',
 				headers: {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify(input),
 			});
-
+			
 			// Continue handling the response as needed
-
+			
 			const data = await res.json()
 			if (data.error) {
 				showToast("error", data.error, "error")
@@ -65,7 +66,7 @@ export default function SignupCard() {
 
 
 		} catch (error) {
-			console.log(error.message || "Something went wrong while submitting")
+			showToast("error", error.message || "Something went wrong whilel logging in", "error")
 		} finally {
 			setLoading(false)
 		}

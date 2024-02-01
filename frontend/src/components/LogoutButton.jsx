@@ -3,30 +3,31 @@ import { useSetRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
 import useShowToast from "../hooks/useShowToast";
 import { FiLogOut } from "react-icons/fi";
-// import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const LogoutButton = () => {
+	const navigate = useNavigate()
 	const setUser = useSetRecoilState(userAtom);
 	const showToast = useShowToast();
 
 	const handleLogout = async () => {
 		try {
-			const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/logout", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-			const data = await res.json();
+			// const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/logout", {
+			// 	method: "POST",
+			// 	headers: {
+			// 		"Content-Type": "application/json",
+			// 	},
+			// });
+			// const data = await res.json();
 
-			if (data.error) {
-				showToast("Error", data.error, "error");
-				return;
-			}
+			// if (data.error) {
+			// 	showToast("Error", data.error, "error");
+			// 	return;
+			// }
 
 			localStorage.removeItem("user-threads");
 			setUser(null);
-			// Navigate("/auth")
+			navigate("/auth")
 		} catch (error) {
 			showToast("Error", error, "error");
 		}

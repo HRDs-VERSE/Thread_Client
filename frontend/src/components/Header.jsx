@@ -20,6 +20,7 @@ function Header() {
   const dispatch = useDispatch();
   const user = useRecoilValue(userAtom);
   const { colorMode, toggleColorMode } = useColorMode();
+  const apiURL = import.meta.env.VITE_API_URL;
   const [userValue, setUserValue] = useState({
     value: ""
   })
@@ -39,9 +40,8 @@ function Header() {
 
   useEffect(() => {
     const fetchUserSearchResults = async () => {
-      console.log(userValue)
       try {
-        const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/search-user", {
+        const res = await fetch(`${apiURL}/api/v1/users/search-user`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -55,7 +55,6 @@ function Header() {
           showToast("Error", data.error, "error");
         }
 
-        console.log(data);
       } catch (error) {
         showToast("Error", "Something went wrong while searching users", "error");
       }
@@ -90,7 +89,7 @@ function Header() {
 
     <Flex mt="6" mb="12">
       <Image
-        className="right-[20rem] "
+        className={`${!user && " relative left-[13.6rem]"}`}
         cursor="pointer"
         alt="logo"
         w="50px"

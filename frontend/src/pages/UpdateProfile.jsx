@@ -13,7 +13,7 @@ import {
   Center,
 } from '@chakra-ui/react'
 import { useRef, useState } from 'react'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import userAtom from "../atoms/userAtom"
 import usePreviewImg from '../hooks/usePreviewImg'
 import useShowToast from '../hooks/useShowToast'
@@ -22,6 +22,9 @@ export default function UserProfileEdit() {
   const fileRef = useRef(null)
   const showToast = useShowToast()
   const [user, setUser] = useRecoilState(userAtom)
+  const currentUser = useRecoilValue(userAtom)
+  const apiURL = import.meta.env.VITE_API_URL;
+
   const [input, setInput] = useState({
     fullName: user.fullName,
     username: user.username,
@@ -35,12 +38,12 @@ export default function UserProfileEdit() {
     e.preventDefault()
 
     try {
-       const res = await fetch("https://mern-thread-hrd.vercel.app/api/v1/users/update-account-details", {
+       const res = await fetch(`${apiURL}/api/v1/users/update-account-details`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({...input, avatar: imgUrl})
+        body: JSON.stringify({...input, avatar: imgUrl, userId : currentUser?._id})
        })
 
        const data = await res.json()
