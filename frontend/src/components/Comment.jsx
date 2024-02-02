@@ -3,6 +3,8 @@ import { useState } from "react"
 import { BsThreeDots } from "react-icons/bs"
 // import Actions from "./Actions"
 import useShowToast from "../hooks/useShowToast"
+import { useRecoilValue } from 'recoil'
+import userAtom from "../atoms/userAtom"
 
 
 function Comment({
@@ -13,9 +15,11 @@ function Comment({
     likes,
     username,
     createdAt,
-    setComments
+    setComments,
+    owner
 }) {
-    
+
+    const currentUser = useRecoilValue(userAtom)
     const apiURL = import.meta.env.VITE_API_URL;
     const showToast = useShowToast()
 
@@ -24,45 +28,42 @@ function Comment({
             const res = await fetch(`${apiURL}/api/v1/post/comment/${postId}/${commentId}`, {
                 method: "PATCH",
                 headers: {
-					"Content-Type": "application/json"
-				},
+                    "Content-Type": "application/json"
+                },
             })
 
             const data = await res.json()
             showToast("Success", "Comment deleted successfully", "success")
             setComments(data)
-            
-            
+
+
         } catch (error) {
             showToast("Error", "Something went worng while deleting post", "error")
         }
     }
-    // const [liked, setLiked ] = useState(false)
-  return (
-    <>
-     <Flex gap={4} my={2} py={2} w={"full"}>
-        <Avatar src={avatar} size={"sm"} />
-        <Flex gap={1} w={"full"} flexDirection={"column"}>
-            <Flex w={"full"} justifyContent={"space-between"} alignItems={"center"}>
-                <Text fontSize={"sm"} fontWeight={"bold"}>
-                    {username}
-                </Text>
-                <Flex gap={2} alignItems={"center"}>
-                    <Text fontSize={"sm"} color={"#736c6c"}>{createdAt}</Text>
-                    {/* <BsThreeDots /> */}
-                    <Button onClick={deleteComment}>Delete</Button>
+
+    return (
+        <>
+            <Flex gap={4} my={2} py={2} w={"full"}>
+                <Avatar src={avatar} size={"sm"} />
+                <Flex gap={1} w={"full"} flexDirection={"column"}>
+                    <Flex w={"full"} justifyContent={"space-between"} alignItems={"center"}>
+                        <Text fontSize={"sm"} fontWeight={"bold"}>
+                            {username}
+                        </Text>
+                        <Flex gap={2} alignItems={"center"}>
+                            <Text fontSize={"sm"} color={"#736c6c"}>{createdAt}</Text>
+                            {currentUser?._id === owner && (
+                                <Button onClick={deleteComment}>Delete</Button>
+                            )}
+                        </Flex>
+                    </Flex>
+                    <Text>{comment}</Text>
                 </Flex>
             </Flex>
-            <Text>{comment}</Text>
-            {/* <Actions liked={liked} setLiked={setLiked} /> */}
-            {/* <Text fontSize={"sm"} color={"#736c6c"}>
-                {likes + (liked ? 1 : 0)} likes
-            </Text> */}
-        </Flex>
-    </Flex>
-    <Divider /> 
-    </>
-  )
+            <Divider />
+        </>
+    )
 }
 
 export default Comment

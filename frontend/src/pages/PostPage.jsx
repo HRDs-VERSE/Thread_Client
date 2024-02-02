@@ -130,6 +130,7 @@ function PostPage() {
             comment={postComment.content}
             avatar={postComment.userAvatar}
             createdAt="2d"
+            owner = {postComment.userId}
             username={postComment.username}
             likes={post?.likes?.length ? post?.likes?.length : 0}
             setComments={setPostComments} // Pass the setPostComments function
