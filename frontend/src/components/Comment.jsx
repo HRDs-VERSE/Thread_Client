@@ -21,8 +21,6 @@ function Comment({
     const currentUser = useRecoilValue(userAtom)
     const apiURL = import.meta.env.VITE_API_URL;
     const showToast = useShowToast()
-    console.log(currentUser._id === owner)
-    console.log(currentUser._id , owner)
 
     const deleteComment = async () => {
         try {

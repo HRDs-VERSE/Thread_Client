@@ -20,6 +20,7 @@ import useShowToast from '../hooks/useShowToast'
 
 export default function UserProfileEdit() {
   const fileRef = useRef(null)
+  const [loading, setloading] = useState(false)
   const showToast = useShowToast()
   const [user, setUser] = useRecoilState(userAtom)
   const currentUser = useRecoilValue(userAtom)
@@ -36,6 +37,7 @@ export default function UserProfileEdit() {
 
   const handelSubmit = async (e) => {
     e.preventDefault()
+    setloading(true)
 
     try {
        const res = await fetch(`${apiURL}/api/v1/users/update-account-details`, {
@@ -56,6 +58,8 @@ export default function UserProfileEdit() {
       
     } catch (error) {
       showToast("Error", error, "error")
+    }finally{
+      setloading(false)
     }
     
   }
@@ -170,6 +174,7 @@ export default function UserProfileEdit() {
                 bg: 'blue.500',
               }}
               type='submit'
+              isLoading={loading}
             >
               Submit
             </Button>
