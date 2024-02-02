@@ -30,7 +30,7 @@ export default function UserProfileEdit() {
     username: user.username,
     email: user.email,
     bio: user.bio,
-    password: ""
+    newPassword: ""
   })
   const { handleImageChange, imgUrl } = usePreviewImg()
 
@@ -148,8 +148,8 @@ export default function UserProfileEdit() {
               placeholder="password"
               _placeholder={{ color: 'gray.500' }}
               type="password"
-              onChange={(e) => setInput({ ...input, password: e.target.value })}
-              value={input.password}
+              onChange={(e) => setInput({ ...input, newPassword: e.target.value })}
+              value={input.newPassword}
             />
           </FormControl>
           <Stack spacing={6} direction={['column', 'row']}>
