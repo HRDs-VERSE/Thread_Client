@@ -10,7 +10,7 @@ const modeSlice = createSlice({
   initialState,
   reducers: {
     changeMode: (state, action) => {
-      state.mode = action.payload; // Corrected from state.mode = !mode
+      state.mode = action.payload; 
     },
     changeFilter: (state, action) => {
       state.filter = action.payload

@@ -5,11 +5,11 @@ import { useRecoilValue } from "recoil"
 import userAtom from "../atoms/userAtom"
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import useShowToast from "../hooks/useShowToast"
+// import useShowToast from "../hooks/useShowToast"
 
 
 function UserHeader({ user }) {
-    const showToast = useShowToast
+    // const showToast = useShowToast()
     const currentUser = useRecoilValue(userAtom)
     const toast = useToast();
     const [updating, setUpdating] = useState(false)
@@ -36,7 +36,7 @@ function UserHeader({ user }) {
     }
     const handleFollow = async () => {
         if (!currentUser) {
-            showToast("Error", "Please Login to Follow", "error");
+            // showToast("Error", "Please Login to Follow", "error");
             return;
         }
 
@@ -54,7 +54,7 @@ function UserHeader({ user }) {
             const data = await res.json();
 
             if (data.error) {
-                showToast("Error", data.error.message, "error");
+                // showToast("Error", data.error.message, "error");
                 return;
             }
 
@@ -72,7 +72,7 @@ function UserHeader({ user }) {
             }
             setFollowing(!following);
         } catch (error) {
-            showToast("Error", error.message, "error");
+            // showToast("Error", error.message, "error");
         } finally {
             setUpdating(false);
         }

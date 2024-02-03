@@ -10,10 +10,9 @@ import { changeMode, changeFilter } from "../store/modeSlice";
 
 import { useEffect, useState } from "react";
 import useShowToast from "../hooks/useShowToast"
-import { useParams } from "react-router-dom";
 
 function Header() {
-  const param = useParams()
+
   const themeMode = useSelector((state) => state.mode.mode)
   const showToast = useShowToast()
   const { isOpen, onOpen, onClose } = useDisclosure();
