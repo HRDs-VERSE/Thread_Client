@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   mode: true,
-  filter: false
 };
 
 const modeSlice = createSlice({
@@ -11,13 +10,10 @@ const modeSlice = createSlice({
   reducers: {
     changeMode: (state, action) => {
       state.mode = action.payload; 
-    },
-    changeFilter: (state, action) => {
-      state.filter = action.payload
     }
   },
 });
 
-export const { changeMode, changeFilter } = modeSlice.actions;
+export const { changeMode} = modeSlice.actions;
 
 export default modeSlice.reducer;

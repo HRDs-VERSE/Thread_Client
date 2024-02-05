@@ -5,17 +5,14 @@ import { useRecoilValue } from "recoil"
 import userAtom from "../atoms/userAtom"
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-// import useShowToast from "../hooks/useShowToast"
+import useUserApi from "../api/userAPI"
 
 
 function UserHeader({ user }) {
-    // const showToast = useShowToast()
     const currentUser = useRecoilValue(userAtom)
     const toast = useToast();
-    const [updating, setUpdating] = useState(false)
     const [following, setFollowing] = useState(user?.followers.includes(currentUser?.username))
-    const apiURL = import.meta.env.VITE_API_URL;
-
+    const {handleFollow} = useUserApi()
 
     useEffect(() => {
         if (user) {
@@ -34,50 +31,12 @@ function UserHeader({ user }) {
         });
 
     }
-    const handleFollow = async () => {
-        if (!currentUser) {
-            // showToast("Error", "Please Login to Follow", "error");
-            return;
-        }
 
-        setUpdating(true);
-
-        try {
-            const res = await fetch(`${apiURL}/api/v1/users/follow-un-follow/${user?._id}`, {
-                method: "POST",
-                headers: {
-					"Content-Type": "application/json"
-				},
-                body: JSON.stringify({currentUserId: currentUser?._id})
-            });
-
-            const data = await res.json();
-
-            if (data.error) {
-                // showToast("Error", data.error.message, "error");
-                return;
-            }
-
-            const updatedUserResponse = await fetch(`${apiURL}/api/v1/users/${currentUser?.username}`);
-            const updatedUserData = await updatedUserResponse.json();
-
-            // Update the local storage or state with the updated user data
-            localStorage.setItem("user-threads", JSON.stringify(updatedUserData));
-
-            // Update your state or context with the updated user data if needed
-            if (following) {
-                user.followers.pop();
-            } else {
-                user.followers.push(currentUser?._id);
-            }
-            setFollowing(!following);
-        } catch (error) {
-            // showToast("Error", error.message, "error");
-        } finally {
-            setUpdating(false);
-        }
+    const handleFollowClick = () => {
+        handleFollow(currentUser, user, setFollowing, following);
     };
 
+        
     return (
         <VStack gap={4} alignItems={"start"} fontSize={"25px"}>
             <Flex justifyContent={"space-between"} w={"full"}>
@@ -86,15 +45,14 @@ function UserHeader({ user }) {
                         <Text fontSize={"2xl"} fontWeight={"bold"}>
                             {user?.username}
                         </Text>
-                        <Image src='/verified.png' w={4} h={4} ml={1} position={"relative"} top={".8rem"} left={".5rem"} />
+                        <Image src='./space.png' w={4} h={4} ml={1} position={"relative"} top={".8rem"} left={".5rem"} />
                     </Flex>
                     <Flex gap={2} alignItems={"center"}>
                         <Text fontSize={"md"}>{user?.fullName}</Text>
-                        <Text fontSize={"sm"} bg={"#b5b5b5"} color={"#545353"} p={1} borderRadius={("full")}>threads.net</Text>
                     </Flex>
                 </Box>
                 <Box>
-                    <Avatar name={user?.username} src={user?.avatar} size={{
+                    <Avatar name={user?.username} src={user?.avatar || "./nullAvatar.jpg"} size={{
                         base: "md",
                         md: "xl",
                     }} />
@@ -112,7 +70,7 @@ function UserHeader({ user }) {
             )}
             {currentUser?._id !== user?._id && (
                 <Link>
-                    <Button size={"sm"} onClick={handleFollow} isLoading={updating}>
+                    <Button size={"sm"} onClick={handleFollowClick}>
                         {following ? "Unfollow" : "Follow"}
                     </Button>
                 </Link>

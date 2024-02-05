@@ -9,9 +9,12 @@ import { formatDistanceToNow } from "date-fns"
 import usePostAPI from "../api/postAPI"
 import { Button } from "@chakra-ui/react";
 import { MdOutlineDelete } from "react-icons/md";
+import userAtom from "../atoms/userAtom";
+import { useRecoilValue } from "recoil";
 
 
 const Post = ({ post, postedBy }) => {
+    const currentUser = useRecoilValue(userAtom)
     const { deletePost } = usePostAPI();
     const showToast = useShowToast()
     const [user, setUser] = useState()
@@ -23,16 +26,26 @@ const Post = ({ post, postedBy }) => {
 
         const parts = distance.split(' ');
 
+        if (parts[0] === 'about') {
+            const value = parseInt(parts[1]);
+
+            if (parts[2].startsWith('minute')) {
+                return `${value}min`;
+            }
+
+            if (parts[2].startsWith('hour')) {
+                return `${value}hr`;
+            }
+        }
+
         if (parts[1].startsWith('day')) {
             const value = parseInt(parts[0]);
             return `${value}d`;
-        } else if (parts[1].startsWith('hour')) {
-            const value = parseInt(parts[0]);
-            return `${value}h`;
         }
 
         return distance;
     };
+
 
     useEffect(() => {
         const userData = async () => {
@@ -56,7 +69,7 @@ const Post = ({ post, postedBy }) => {
 
         <Flex gap={3} mb={4} py={5}>
             <Flex flexDirection={"column"} alignItems={"center"}>
-                <Avatar size='md' name={user.username} src={user.avatar}
+                <Avatar size='md' name={user.username} src={user.avatar || "./nullAvatar.jpg"}
                     onClick={(e) => {
                         e.preventDefault()
                         navigate(`/${user.username}`)
@@ -106,6 +119,7 @@ const Post = ({ post, postedBy }) => {
                 <Flex justifyContent={"space-between"} w={"full"}>
                     <Flex w={"full"} alignItems={"center"}>
                         <Text fontSize={"sm"} fontWeight={"bold"}
+                            cursor={"pointer"}
                             onClick={(e) => {
                                 e.preventDefault()
                                 navigate(`/${user.username}`)
@@ -113,15 +127,17 @@ const Post = ({ post, postedBy }) => {
                         >
                             {post.owner}
                         </Text>
-                        <Image src='/verified.png' w={4} h={4} ml={1} />
+                        <Image src='/space.png' w={4} h={4} ml={3} />
                     </Flex>
                     <Flex gap={4} alignItems={"center"}>
                         <Text fontSize={"xm"} w={"36"} textAlign={"right"} color={"#736c6c"}>
                             {customFormatDistanceToNow(new Date(post.createdAt))}
                         </Text>
-                        <Button onClick={() => deletePost(post._id)}>
-                            <MdOutlineDelete />
-                        </Button>
+                        {currentUser?.username === post?.owner && (
+                            <Button onClick={() => deletePost(post._id)}>
+                                <MdOutlineDelete />
+                            </Button>
+                        )}
                     </Flex>
                 </Flex>
                 <Link to={`/${user.username}/post/${post._id}`}>
@@ -130,7 +146,7 @@ const Post = ({ post, postedBy }) => {
                 {post.postFile && (
                     <Link to={`/${user.username}/post/${post._id}`}>
                         <Box borderRadius={6} overflow={"hidden"} navigate={`/${user.username}/post/${post._id}`}>
-                            <Image src={post.postFile.url} w={"full"} className="rounded-[20px]" />
+                            <Image loading={"lazy"} src={post.postFile.url} w={"full"} className="rounded-[20px]" />
                         </Box>
                     </Link>
                 )}

@@ -6,7 +6,7 @@ import { GoHome } from "react-icons/go";
 import { RxAvatar } from "react-icons/rx";
 import { IoSearchOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { changeMode, changeFilter } from "../store/modeSlice";
+import { changeMode } from "../store/modeSlice";
 
 import { useEffect, useState } from "react";
 import useShowToast from "../hooks/useShowToast"
@@ -14,12 +14,9 @@ import useShowToast from "../hooks/useShowToast"
 function Header() {
 
   const themeMode = useSelector((state) => state.mode.mode)
-  const showToast = useShowToast()
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const dispatch = useDispatch();
   const user = useRecoilValue(userAtom);
   const { colorMode, toggleColorMode } = useColorMode();
-  const apiURL = import.meta.env.VITE_API_URL;
   const [userValue, setUserValue] = useState({
     value: ""
   })
@@ -36,50 +33,13 @@ function Header() {
     }
   };
 
-
   useEffect(() => {
-    const fetchUserSearchResults = async () => {
-      try {
-        const res = await fetch(`${apiURL}/api/v1/users/search-user`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(userValue)
-        })
-
-        const data = await res.json();
-        if (data.error) {
-
-          showToast("Error", data.error, "error");
-        }
-
-      } catch (error) {
-        showToast("Error", "Something went wrong while searching users", "error");
-      }
-    };
-
-    if (userValue.value !== "") {
-      fetchUserSearchResults();
-    }
-
-  }, [userValue]);
-
-  useEffect(() => {
-    if (isOpen) {
-      dispatch(changeFilter(true)); // Dispatch true when modal is open
-    } else {
-      dispatch(changeFilter(false)); // Dispatch false when modal is closed
-    }
-  }, [isOpen, dispatch]);
-
-  useEffect(() => { 
-    if(colorMode === "light"){
+    if (colorMode === "light") {
       dispatch(changeMode(false))
-    }else{
+    } else {
       dispatch(changeMode(true))
     }
-  },[colorMode])
+  }, [colorMode])
 
 
 
@@ -113,18 +73,19 @@ function Header() {
             </Box>
 
           </Link>
+          <Link to={`searchpage`}>
+            <Box
+              className={`border-2 border-white p-3 rounded-[1rem] mx-5 duration-[.2s] transition-transform 
+            ${colorMode === "dark" ? "hover:bg-[#121212]" : "hover:bg-gray-200"}
+            ${themeMode ? "border-[#121212]" : "border-white"}`}
+              _hover={{
+                transform: 'scale(1.1)'
+              }}
 
-          <Box
-            className={`border-2 border-white p-3 rounded-[1rem] mx-5 duration-[.2s] transition-transform 
-              ${colorMode === "dark" ? "hover:bg-[#121212]" : "hover:bg-gray-200"}
-              ${themeMode ? "border-[#121212]" : "border-white"}`}
-            _hover={{
-              transform: 'scale(1.1)'
-            }}
-            onClick={onOpen}
-          >
-            <IoSearchOutline size={40} />
-          </Box>
+            >
+              <IoSearchOutline size={40} />
+            </Box>
+          </Link>
 
           <Link to={`/${user.username}`}>
             <Box
@@ -140,21 +101,6 @@ function Header() {
           </Link>
         </div>
       )}
-
-      <Modal onClose={onClose} isOpen={isOpen} motionPreset='slideInBottom'>
-        <ModalOverlay />
-        <ModalContent bg="transparent">
-          <ModalBody bg={"transparent"}>
-            <input
-              placeholder="search users"
-              className="border-3 focus:border-[white]  h-[4rem] w-[24rem] rounded-[1rem] text-xl p-5 outline-none bg-slate-100 "
-              onChange={(e) => setUserValue({ ...userValue, value: e.target.value })}
-              value={userValue.value}
-            />
-
-          </ModalBody>
-        </ModalContent>
-      </Modal>
 
     </Flex>
   );

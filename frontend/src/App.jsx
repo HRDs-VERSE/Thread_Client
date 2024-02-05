@@ -12,15 +12,15 @@ import LogoutButton from "./components/LogoutButton";
 import UpdateProfile from "./pages/UpdateProfile";
 import CreatePost from './components/CreatePost';
 import { useSelector } from 'react-redux';
+import SearchPage from './pages/SearchPage';
 
 function App() {
   const isAuthenticated = useRecoilValue(userAtom);
   const modeStatus = useSelector((state) => state.mode.mode)
-  const filterStatus = useSelector((state) => state.mode.filter)
 
   const bodyStyle = {
     backgroundColor: modeStatus ? 'black' : '#f5f5f5',
-    filter: filterStatus ? 'blur(5px)' : 'none', // Apply blur if filterStatus is true
+
   };
 
 
@@ -39,14 +39,15 @@ function App() {
       </Container>
 
 
-      <Container maxW="700px" style={{ filter: bodyStyle.filter }} className='flex-coloum items-center' >
+      <Container maxW="700px" className='flex-coloum items-center' >
 
         <Routes>
           <Route path="/" element={isAuthenticated ? <HomePage /> : <Navigate to='/auth' />} />
           <Route path="/auth" element={!isAuthenticated ? <AuthPage /> : <Navigate to='/' />} />
           <Route path="/updateprofile" element={isAuthenticated ? <UpdateProfile /> : <Navigate to='/auth' />} />
           <Route path="/:username" element={!isAuthenticated ? <AuthPage /> : <UserPage />} />
-          <Route path="/:username/post/:postId" element={<PostPage />} />
+          <Route path="/:username/post/:postId" element={!isAuthenticated ? <Navigate to="/auth" /> : <PostPage />} />
+          <Route path="/searchpage" element={!isAuthenticated ? <Navigate to="/auth" /> : <SearchPage />} />
         </Routes>
 
         {isAuthenticated && <LogoutButton />}

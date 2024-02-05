@@ -14,7 +14,7 @@ function Actions({ post: post_ }) {
 	const [post, setPost] = useState(post_)
 	const [isLiking, setLiking] = useState(false)
 	const { isOpen, onOpen, onClose } = useDisclosure()
-	const [reply, setReply] = useState("")
+	const [reply, setReply] = useState(`@${post_?.owner} `)
 	const [isReplying, setIsReplying] = useState(false);
 	const apiURL = import.meta.env.VITE_API_URL;
 
