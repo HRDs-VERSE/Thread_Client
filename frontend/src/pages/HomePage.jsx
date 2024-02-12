@@ -16,10 +16,7 @@ function HomePage() {
 
   useEffect(() => {
     
-    if(!post){
       getFeedPost(userId, setLoading)
-    }
-
 
   }, [])
 
