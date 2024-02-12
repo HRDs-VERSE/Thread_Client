@@ -6,37 +6,56 @@ import userAtom from "../atoms/userAtom"
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useUserApi from "../api/userAPI"
+import useShowToast from "../hooks/useShowToast";
 
 
 function UserHeader({ user }) {
+    const { handelFollow, getUserFollowers, getUserFollowing  } = useUserApi()
     const currentUser = useRecoilValue(userAtom)
-    const toast = useToast();
-    const [following, setFollowing] = useState(user?.followers.includes(currentUser?.username))
-    const {handleFollow} = useUserApi()
+    const showToast = useShowToast();
+    const [ fetching, setFetching ] = useState(false)
+    const [ followers, setFollowers ] = useState([])
+    const [ following, setFollowing ] = useState([])
+    const [followBtn, setFollowBtn] = useState(followers.some((follower) => follower.userId === currentUser?._id));
 
-    useEffect(() => {
-        if (user) {
-            setFollowing(user.followers.includes(currentUser?.username));
-        }
-    }, [user, currentUser]);
     const copyURL = () => {
         const currentURL = window.location.href
-        navigator.clipboard.writeText(currentURL)
-        toast({
-            title: "Success.",
-            status: "success",
-            description: "Profile link copied.",
-            duration: 3000,
-            isClosable: true,
-        });
-
+        navigator.clipboard.writeText(currentURL);
+        showToast("Success", "Like copied", "success")
     }
+    
+    useEffect(() => {
+        if (user) {
+            getUserFollowers(user, setFollowers);
+            getUserFollowing(user, setFollowing)
+        }
+    }, [user])
 
-    const handleFollowClick = () => {
-        handleFollow(currentUser, user, setFollowing, following);
+    
+    useEffect(() => {
+        setFollowBtn(followers.some((follower) => follower.userId === currentUser?._id))
+    }, [followers])
+
+
+    const handleFollowClick = async () => {
+
+        if (fetching) return 
+        setFollowBtn((prev) => !prev)
+
+        setFetching(true)
+        try {
+
+            await handelFollow(currentUser, user)
+            getUserFollowers(user, setFollowers)
+
+        } catch (error) {
+            setFollowBtn((prev) => !prev)
+        } finally{
+            setFetching(false)
+        }
     };
 
-        
+
     return (
         <VStack gap={4} alignItems={"start"} fontSize={"25px"}>
             <Flex justifyContent={"space-between"} w={"full"}>
@@ -71,15 +90,15 @@ function UserHeader({ user }) {
             {currentUser?._id !== user?._id && (
                 <Link>
                     <Button size={"sm"} onClick={handleFollowClick}>
-                        {following ? "Unfollow" : "Follow"}
+                        {followBtn ? "Unfollow" : "Follow"}
                     </Button>
                 </Link>
             )}
             <Flex w={"full"} justifyContent={"space-between"}>
                 <Flex gap={2} alignItems={"center"} fontSize={"1.2rem"}>
-                    <Text color={"#736c6c"}>{user?.followers.length} followers</Text>
+                    <Text color={"#736c6c"}>{followers?.length} followers</Text>
                     <Box w="1" h="1" bg={"white"} borderRadius={"full"}></Box>
-                    <Text color={"#736c6c"}>{user?.following.length} following</Text>
+                    <Text color={"#736c6c"}>{following?.length} following</Text>
                 </Flex>
                 <Flex >
                     <Box className="icon-container">

@@ -17,16 +17,15 @@ import { useState } from 'react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useSetRecoilState } from "recoil";
 import authScreenAtom from "../atoms/authAtom";
-import useShowToast from '../hooks/useShowToast';
 import userAtom from '../atoms/userAtom';
+import useUserApi from '../api/userAPI';
 
 export default function SignupCard() {
   const [loading, setLoading] = useState(false)
-  const showToast = useShowToast()
+  const { signUp } = useUserApi()
   const setUser = useSetRecoilState(userAtom)
   const [showPassword, setShowPassword] = useState(false)
   const setAuthScreen = useSetRecoilState(authScreenAtom);
-  const apiURL = import.meta.env.VITE_API_URL;
   const [input, setInput] = useState({
     fullName: "",
     username: "",
@@ -37,44 +36,24 @@ export default function SignupCard() {
 
   const handleSubmit = async () => {
     setLoading(true)
-    try {
-      
-      const res = await fetch(`${apiURL}/api/v1/users/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(input)
-      })
-      const data = await res.json() 
-      if (data.error) {
-        showToast("error", data.error, "error")
-        return  
-      }
 
-      localStorage.setItem("user-threads", JSON.stringify(data))
-      setUser(data)
-      
-      setInput({
-        fullName: "",
-        username: "",
-        email: "",
-        password: "",
-      })
+    await signUp(input, setUser)
 
+    setInput({
+      fullName: "",
+      username: "",
+      email: "",
+      password: "",
+    })
 
-    } catch (error) {
-      showToast("error", error.message || "Something went wrong while sign up", "error")
-    } finally{
-      setLoading(false)
-    }
+    setLoading(false)
   }
 
   return (
     <Flex
       align={'center'}
       justify={'center'}>
-      <Stack spacing={8}  maxW={'lg'} >
+      <Stack spacing={8} maxW={'lg'} >
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
             Sign up
@@ -86,8 +65,8 @@ export default function SignupCard() {
           boxShadow={'lg'}
           p={8}
           className='rounded-[1rem] w-auto'
-          >
-          
+        >
+
           <Stack spacing={4}>
             <HStack>
               <Box>

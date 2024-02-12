@@ -1,80 +1,71 @@
-import { Box, Button, Flex, FormControl, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react"
-import { useState } from "react";
+import { Box, Flex, FormControl,  Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react"
+import { useEffect, useState } from "react";
 import useShowToast from "../hooks/useShowToast"
 import { useRecoilValue } from "recoil"
 import userAtom from "../atoms/userAtom"
 import { useSelector } from "react-redux";
+import useCommentApi from "../api/commentAPI";
+import useLikeApi from "../api/likeAPI";
 
 
-function Actions({ post: post_ }) {
+function Actions({ post , postComments, setPostComments}) {
+
+	const { setPostlike , getPostLike } = useLikeApi()
+	const { createComment } = useCommentApi()
+
 	const mode = useSelector((state) => state.mode.mode)
-	const showToast = useShowToast()
 	const user = useRecoilValue(userAtom)
-	const [liked, setLiked] = useState(post_?.likes?.includes(user._id));
-	const [post, setPost] = useState(post_)
+
+	const showToast = useShowToast()
+	const [like, setLike] = useState([])
+	const [likeBtn, setLikeBtn] = useState(like.some((like) => like.userId === user?._id));
 	const [isLiking, setLiking] = useState(false)
 	const { isOpen, onOpen, onClose } = useDisclosure()
-	const [reply, setReply] = useState(`@${post_?.owner} `)
+	const [reply, setReply] = useState()
 	const [isReplying, setIsReplying] = useState(false);
-	const apiURL = import.meta.env.VITE_API_URL;
-
+	const userId = user?._id
+	const postId = post?._id
+	
 	const handleLikeAndUnlike = async () => {
 		if (!user) return showToast("Error", "Plase Login First", "error")
 		if (isLiking) return
-		setLiking(true)
+		
+		setLikeBtn((prev) => !prev)
 		try {
-			const res = await fetch(`${apiURL}/api/v1/post/like/${post?._id}`, {
-				method: "PATCH",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				body: JSON.stringify({ userId: user?._id })
-
-			})
-			const data = await res.json()
-			if (data.error) {
-				showToast("Error", data.error, "error")
-			}
-			if (!liked) {
-				setPost({ ...post, likes: [...post?.likes, user._id] })
-			} else {
-				setPost({ ...post, likes: post?.likes.filter(id => id !== user._id) })
-			}
-			setLiked(!liked)
-
+			await setPostlike(userId, postId, setLiking, setLike)
+		    getPostLike(postId, setLike)
+			
 		} catch (error) {
-			showToast("Error", error.message, "error")
-		} finally {
-			setLiking(false)
+			setLikeBtn((prev) => !prev)
 		}
+		
 	}
+
+	useEffect(() => {
+		getPostLike(postId, setLike)
+
+	},[post])
+
+	useEffect(() => {
+		setLikeBtn(like?.some((like) => like.userId === user?._id))
+	}, [like])
+
+
 
 	const handleReply = async () => {
 		if (!user) return showToast("Error", "You must be logged in to reply to a post", "error");
 		if (isReplying) return;
-		setIsReplying(true);
-		try {
-			const res = await fetch(`${apiURL}/api/v1/post/comment/${post?._id}`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ content: reply, userId: user?._id }),
-			});
-			const data = await res.json();
-			if (data.error) return showToast("Error", data.error, "error");
 
-			setPost({ ...post, comments: [...post.comments, data] })
+		const userId = user?._id 
+		const postId = post?._id
+		const content = reply 
 
-			showToast("Success", "Reply posted successfully", "success");
-			onClose();
-			setReply("");
-		} catch (error) {
-			showToast("Error", error.message, "error");
-		} finally {
-			setIsReplying(false);
-		}
-	};
+		await createComment(userId, postId, content, setIsReplying, setPostComments)	
+
+		showToast("Success", "Reply posted successfully", "success");
+		onClose();
+		setReply("");
+	}
 
 
 	if (!post) return null
@@ -84,8 +75,8 @@ function Actions({ post: post_ }) {
 			<Flex gap={3} my={2} onClick={(e) => e.preventDefault()}>
 				<svg
 					aria-label='Like'
-					color={liked ? "rgb(237, 73, 86)" : ""}
-					fill={liked ? "rgb(237, 73, 86)" : "transparent"}
+					color={likeBtn ? "rgb(237, 73, 86)" : ""}
+					fill={likeBtn ? "rgb(237, 73, 86)" : "transparent"}
 					height='19'
 					role='img'
 					viewBox='0 0 24 22'
@@ -125,11 +116,11 @@ function Actions({ post: post_ }) {
 
 			<Flex gap={2} alignItems={"center"}>
 				<Text color={"gray.light"} fontSize='sm'>
-					{post.comments?.length} replies
+					{postComments?.length} replies
 				</Text>
 				<Box w={0.5} h={0.5} borderRadius={"full"} bg={"black"}></Box>
 				<Text color={"gray.light"} fontSize='sm'>
-					{post.likes?.length} likes
+					{like?.length} likes
 				</Text>
 			</Flex>
 

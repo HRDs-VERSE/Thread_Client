@@ -1,64 +1,49 @@
-import { Avatar, Flex, Image, Text, Box, Divider, Button } from "@chakra-ui/react"
+import { Avatar, Flex, Image, Text, Box, Divider } from "@chakra-ui/react"
 import Actions from "../components/Actions"
 // import { BsThreeDots } from "react-icons/bs"
 import { useEffect, useState } from "react"
 import Comment from "../components/Comment"
 import { useParams } from "react-router-dom"
-import useShowToast from "../hooks/useShowToast"
 import { Spinner } from "@chakra-ui/react"
 import { useNavigate } from "react-router-dom"
+import useUserApi from "../api/userAPI"
+import useCommentApi from "../api/commentAPI"
+import usePostAPI from "../api/postAPI"
 
 function PostPage() {
   const navigate = useNavigate()
   const params = useParams()
-  const showToast = useShowToast()
+  const { getPost } = usePostAPI()
+  const { getPostComment } = useCommentApi()
+  const { getUser } = useUserApi()
   const [user, setUser] = useState()
   const [post, setPost] = useState()
   const [fetchingPost, setFetchingPost] = useState(true)
   const [loading, setLoading] = useState(true)
   const [postComments, setPostComments] = useState([])
-  const apiURL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const res = await fetch(`${apiURL}/api/v1/users/${params?.username}`);
-        const data = await res.json();
-        if (data.error) {
-          showToast("Error", data.error, "error");
-          return;
-        }
-        setUser(data);
-      } catch (error) {
-        showToast("Error", error.message, "error");
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    const getPost = async () => {
-      setFetchingPost(true);
-      try {
-        const res = await fetch(`${apiURL}/api/v1/post/${params?.postId}`);
-        const data = await res.json();
-        if (data.error) {
-          showToast("Error", data.error, "error");
-          return;
-        }
+    const username = params?.username
+    const postId = params?.postId
 
-        setPost(data);
-        setPostComments(data.comments)
-      } catch (error) {
-        showToast("Error", error.message, "error");
-      } finally {
-        setFetchingPost(false);
-      }
-    };
+    getUser(username, setUser)
 
-    getPost();
-    getUser();
-  }, []);
+    getPost(postId, setFetchingPost, setPost)
 
+
+
+  }, [params?.postId, params?.username]);
+
+  useEffect(() => {
+
+    if (post) {
+      const postId = params?.postId
+      getPostComment(postId, setPostComments)
+
+    }
+
+  }, [post])
 
 
   if (!user && loading && fetchingPost) {
@@ -71,10 +56,10 @@ function PostPage() {
 
 
 
-  if (!user) {
+  if (!user && !post && !fetchingPost) {
     return (
       <Flex justifyContent={"center"}>
-        <h1 style={{ fontSize: "5rem" }}>🫤 is there a user</h1>
+        <h1 style={{ fontSize: "5rem" }}>No user found!</h1>
       </Flex>
     );
   }
@@ -85,9 +70,9 @@ function PostPage() {
       <Flex>
         <Flex w={"full"} alignItems={"center"} gap={3} >
           <Avatar src={user?.avatar} size={"md"} name={user?.username} onClick={(e) => {
-              e.preventDefault()
-              navigate(`/${user.username}`)
-            }}  />
+            e.preventDefault()
+            navigate(`/${user.username}`)
+          }} />
           <Flex>
             <Text fontSize="sm" fontWeight="bold" cursor={"pointer"}
               onClick={(e) => {
@@ -106,15 +91,15 @@ function PostPage() {
       <Box borderRadius={6} overflow={"hidden"} border={"1px solid #736c6c"}>
         {post?.postFile?.url && (
           <Image src={post?.postFile?.url} w={"full"} cursor={"pointer"}
-            />
+          />
         )}
       </Box>
-      <Actions />
 
-      <Flex gap={3} my={3}>
-        <Actions post={post} />
-
-      </Flex>
+      {post && (
+        <Flex gap={3} my={3}>
+          <Actions post={post} postComments={postComments} setPostComments={setPostComments} />
+        </Flex>
+      )}
 
       <Divider my={4} />
 
@@ -125,15 +110,14 @@ function PostPage() {
         postComments?.map((postComment) => (
           <Comment
             commentId={postComment._id}
-            postId={post._id}
             key={postComment._id}
             comment={postComment.content}
             avatar={postComment.userAvatar}
             createdAt="2d"
-            owner = {postComment.userId}
+            owner={postComment.userId}
             username={postComment.username}
             likes={post?.likes?.length ? post?.likes?.length : 0}
-            setComments={setPostComments} // Pass the setPostComments function
+            setComments={setPostComments}
           />
         ))
       )}

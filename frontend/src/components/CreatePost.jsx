@@ -2,28 +2,26 @@ import {Button , FormControl, ModalBody, ModalContent, ModalFooter, ModalOverlay
 import { AddIcon } from "@chakra-ui/icons"
 import { useRef, useState } from "react"
 import usePreviewImg from "../hooks/usePreviewImg"
-import useShowToast from "../hooks/useShowToast"
 import { useRecoilValue } from "recoil"
 import userAtom from "../atoms/userAtom"
 import { PiImagesSquare } from "react-icons/pi";
-import { useDispatch, useSelector } from "react-redux"
-import { setPost } from "../store/postSlice"
+import { useSelector } from "react-redux"
+import usePostAPI from "../api/postAPI"
 
 const maxtChar = 500
 
 function CreatePost() {
-    const dispatch = useDispatch()
+    const { createPost } = usePostAPI()
     const mode = useSelector((state) => state.mode.mode)
-    const showToast = useShowToast()
     const user = useRecoilValue(userAtom)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [postText, setPostText] = useState()
     const [remainingCharater, setReamaningCharacter] = useState(maxtChar)
     
     const {handleImageChange, imgUrl, setImgUrl} = usePreviewImg()
-    const [loading, setLoading] = useState(false)
     const imageRef = useRef(null)
-    const apiURL = import.meta.env.VITE_API_URL;
+    const userId = user?._id
+  
 
 
     const handleTextChange = (e) => {
@@ -39,33 +37,14 @@ function CreatePost() {
     }
 
     const handleCreatePost = async () => {
-        setLoading(true)
-        try {
-            const res = await fetch(`${apiURL}/api/v1/post`, {
-                method: "POST", 
-                headers:{
-        
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({postFileLocalPath: imgUrl ? imgUrl : null, content: postText, userId: user?._id})
-            })
-            const data = await res.json()
-            if (data.error) {
-              showToast('Error', data.error, "error")  
-            }
 
-            dispatch(setPost(data))
-            showToast('Success', "Post Created Successfully 🫡🚀", "success")
+            createPost(postText, userId, imgUrl)
         
             onClose()
             setPostText("")
             setImgUrl("")
             
-        } catch (error) {
-            showToast('Error', "Something went wrong while posting", "error")  
-        }finally{
-            setLoading(false)
-        }
+        
     }
   
   return (

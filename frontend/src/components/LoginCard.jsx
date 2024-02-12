@@ -19,10 +19,12 @@ import { useSetRecoilState } from "recoil";
 import authScreenAtom from "../atoms/authAtom";
 import useShowToast from '../hooks/useShowToast';
 import userAtom from '../atoms/userAtom';
+import useUserApi from '../api/userAPI';
 
 
 export default function SignupCard() {
 	const showToast = useShowToast()
+	const { login } = useUserApi()
 	const setUser = useSetRecoilState(userAtom)
 	const [showPassword, setShowPassword] = useState(false)
 	const setAuthScreen = useSetRecoilState(authScreenAtom);
@@ -37,39 +39,10 @@ export default function SignupCard() {
 	const handleSubmit = async () => {
 		setLoading(true)
 
-		try {
+		await login(setUser, input)
 
-			const res = await fetch(`${apiURL}/api/v1/users/login`, {
-				method: "POST",
-				// credentials: 'include',
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(input),
-			});
-			
-			// Continue handling the response as needed
-			
-			const data = await res.json()
-			if (data.error) {
-				showToast("error", data.error, "error")
-				return
-			}
-
-			localStorage.setItem("user-threads", JSON.stringify(data))
-			setUser(data)
-
-			setInput({
-				credential: "",
-				password: ""
-			})
-
-
-		} catch (error) {
-			showToast("error", error.message || "Something went wrong whilel logging in", "error")
-		} finally {
-			setLoading(false)
-		}
+		setLoading(false)
+		
 	}
 
 	return (

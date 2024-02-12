@@ -5,11 +5,11 @@ import { BsThreeDots } from "react-icons/bs"
 import useShowToast from "../hooks/useShowToast"
 import { useRecoilValue } from 'recoil'
 import userAtom from "../atoms/userAtom"
+import useCommentApi from "../api/commentAPI"
 
 
 function Comment({
     commentId,
-    postId,
     comment,
     avatar,
     likes,
@@ -18,27 +18,12 @@ function Comment({
     setComments,
     owner
 }) {
+    const { deleteComment } = useCommentApi()
     const currentUser = useRecoilValue(userAtom)
-    const apiURL = import.meta.env.VITE_API_URL;
-    const showToast = useShowToast()
 
-    const deleteComment = async () => {
-        try {
-            const res = await fetch(`${apiURL}/api/v1/post/comment/${postId}/${commentId}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-            })
+    const handleDelete = () => {
+        deleteComment(commentId, setComments)
 
-            const data = await res.json()
-            showToast("Success", "Comment deleted successfully", "success")
-            setComments(data)
-
-
-        } catch (error) {
-            showToast("Error", "Something went worng while deleting post", "error")
-        }
     }
 
     return (
@@ -53,7 +38,7 @@ function Comment({
                         <Flex gap={2} alignItems={"center"}>
                             <Text fontSize={"sm"} color={"#736c6c"}>{createdAt}</Text>
                             {currentUser?._id === owner && (
-                                <Button onClick={deleteComment}>Delete</Button>
+                                <Button onClick={handleDelete}>Delete</Button>
                             )}
                         </Flex>
                     </Flex>

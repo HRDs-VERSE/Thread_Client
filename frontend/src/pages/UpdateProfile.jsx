@@ -17,14 +17,17 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 import userAtom from "../atoms/userAtom"
 import usePreviewImg from '../hooks/usePreviewImg'
 import useShowToast from '../hooks/useShowToast'
+import useUserApi from '../api/userAPI'
 
 export default function UserProfileEdit() {
   const fileRef = useRef(null)
+  const { updateProfile } = useUserApi()
   const [loading, setloading] = useState(false)
   const showToast = useShowToast()
   const [user, setUser] = useRecoilState(userAtom)
   const currentUser = useRecoilValue(userAtom)
   const apiURL = import.meta.env.VITE_API_URL;
+  const currentUserId = currentUser?._id
 
   const [input, setInput] = useState({
     fullName: user.fullName,
@@ -38,6 +41,8 @@ export default function UserProfileEdit() {
   const handelSubmit = async (e) => {
     e.preventDefault()
     setloading(true)
+    
+    // await updateProfile(input, imgUrl, setUser, currentUserId)
 
     try {
        const res = await fetch(`${apiURL}/api/v1/users/update-account-details`, {
